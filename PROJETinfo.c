@@ -1,4 +1,4 @@
-// Projet Informatique "Jeu demineur" redigée par Maellys Amaini et Alexies Loyau
+// Projet Informatique "Jeu demineur" redigée par Maellys Amaini
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
