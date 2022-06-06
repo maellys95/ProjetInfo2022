@@ -5,8 +5,8 @@
 
 #define TAILLED  9                   // TAILLE TABLEAU NIVEAU DEBUTANT
 #define TAILLEI  16                  // TAILLE TABLEAU NIVEAU INTERMEDIAIRE
-
-
+void compare(char* nom, time_t score);
+void affiche_record(time_t score);
 void placementMinesI(int nbMines);
 void placementMinesD(int nbMines);          
 void initialisationI();
@@ -14,8 +14,8 @@ void initialisationI();
 void reglesDuJeu();
 void affichageD();
 void affichageI();
-int playD(int resulat, int ligne, int colonne);
-int playI(int resulat, int ligne, int colonne);
+int playD(int resultat, int ligne, int colonne);
+int playI(int resultat, int ligne, int colonne);
 int coordonneeD(int *colonne, int* ligne);
 int coordonneeI(int *colonne, int* ligne);
 char grilleD   [11][11];  // Grille du jeu debutant sans mines
@@ -105,7 +105,7 @@ void placementMinesD(int nbMines){
 			b=rand()%10;// On choisit la colonne de manière aléatoire
 			if (!grilleminesD[a][b]){ // On vérifie ie que la case est libre
 				grilleminesD[a][b] = 1; // On place un 1 pour indiquer qu'il y a une mine
-				restemines--;// Uon enleve une mine au compteur
+				restemines--;// on enleve une mine au compteur
 				
 		    }
 	} 
@@ -124,7 +124,7 @@ void placementMinesI(int nbMines){
 			b=rand()%10;// On choisit la colonne de manière aléatoire
 			if (!grilleminesI[a][b]){ // On vérifie ie que la case est libre
 				grilleminesI[a][b] = 1; // On place un 1 pour indiquer qu'il y a une mine
-				restemines--;// Uon enleve une mine au compteur
+				restemines--;// on enleve une mine au compteur
 				
 		    }
 	} 
@@ -133,10 +133,10 @@ void placementMinesI(int nbMines){
 }
 
 
-int playD(int resulat, int ligne, int colonne)
+int playD(int resultat, int ligne, int colonne)
 {
   int a, b;
-  switch (resulat)
+  switch (resultat)
   {
     case 1 :
         for (a=0; a<TAILLED+2; a++) // parcous 
@@ -161,10 +161,18 @@ int playD(int resulat, int ligne, int colonne)
   }
   return 0;
 }// PAS FINI NE MARCHE PAS 
-int playI(int resulat, int ligne, int colonne)
+
+
+
+
+
+
+
+
+int playI(int resultat, int ligne, int colonne)
 {
   int a, b;
-  switch (resulat)
+  switch (resultat)
   {
     case 1 :
         for (a=0; a<TAILLEI+2; a++)
@@ -227,6 +235,115 @@ int coordonneeI(int *colonne, int* ligne){// Cette fonction permet de stocker le
   return resultat;
 }//Concerne seulement le niveau Intermediare 
 
+void affiche_record(time_t score){
+	FILE* reader =NULL;
+	char tab1[50];
+	char tab2[50];
+	char tab3[50];
+	time_t time1 = 0;
+	time_t time2 = 0;
+	time_t time3 = 0;
+	
+		
+	reader = fopen("record.txt", "r");
+	
+	fscanf(reader, "%s", tab1);
+//	printf("%s ", tab1);
+	fscanf(reader, "%ld", &time1);
+//	printf("%ld \n", time1);
+	fscanf(reader, "%s", tab2);
+//	printf("%s ", tab2);
+	fscanf(reader, "%ld", &time2);
+//	printf("%ld \n", time2);
+	fscanf(reader, "%s", tab3);
+//	printf("%s ", tab3);
+	fscanf(reader, "%ld", &time3);
+//	printf("%ld \n", time3);
+	
+	if ( score >= time3){
+		printf("\n \t\t Félicitation vous dans les 3 meilleurs temps \n");
+		
+	}
+		printf("\t\t Les trois meilleures temps sont :");
+		printf("\n\n\t premier temps %ld de %s", time1, tab1);
+		printf("\n\n\t deuxième temps %ld de %s", time2, tab2);
+		printf("\n\n\t troisième temps %ld de %s", time3, tab3);
+	
+
+}
+	
+	
+void compare(char* nom, time_t score){
+	int i;
+	char tab1[50];
+	char tab2[50];
+	char tab3[50];
+	time_t time1 = 0;
+	time_t time2 = 0;
+	time_t time3 = 0;
+
+	FILE* reader=NULL;
+	reader = fopen("record.txt", "r+");
+	rewind(reader);
+
+	rewind(reader);
+	fscanf(reader, "%s", tab1);
+	printf("%s ", tab1);
+	fscanf(reader, "%ld", &time1);
+	printf("%ld \n", time1);
+	fscanf(reader, "%s", tab2);
+	printf("%s ", tab2);
+	fscanf(reader, "%ld", &time2);
+	printf("%ld \n", time2);
+	fscanf(reader, "%s", tab3);
+	printf("%s ", tab3);
+	fscanf(reader, "%ld", &time3);
+	printf("%ld \n", time3);
+
+rewind(reader);
+	if(score <= time1){
+		time3 = time2;
+		time2 = time1;
+		time1 = score;
+		for(i=0;i<50;i++){
+		tab3[i]= tab2[i];
+		tab2[i]= tab1[i];
+		tab1[i]= *(nom+i);
+		}
+		fprintf(reader,"%s %ld ", tab1, time1);
+		fprintf(reader,"%s %ld ", tab2, time2);
+		fprintf(reader,"%s %ld ", tab3, time3);
+	}	
+	
+	else if(score <=time2){
+		time3 = time2;
+		time2 = score;
+		for(i=0;i<50;i++){
+		tab3[i]= tab2[i];
+		tab2[i]= *(nom+i);
+		
+		}
+		fprintf(reader,"%s %ld ", tab1, time1);
+		fprintf(reader,"%s %ld ", tab2, time2);
+		fprintf(reader,"%s %ld ", tab3, time3);
+		
+	}
+	
+	else if(score <= time3){
+		time3 = score;
+		for(i=0;i<50;i++){
+		tab3[i]= *(nom+i);
+		
+		}
+		fprintf(reader,"%s %ld ", tab1, time1);
+		fprintf(reader,"%s %ld ", tab2, time2);
+		fprintf(reader,"%s %ld ", tab3, time3);
+	}
+	fclose(reader);
+}
+
+
+
 
 int main(){
 	int colonne, ligne;// ligne et colonne entrer par l'utlisateur   
@@ -242,7 +359,7 @@ int main(){
 	
 	clock_t temps; // Sert pour le chronometre
 	srand(time(NULL)); 
-
+	
 	//Afficher le début du jeu
 
 	printf("\n\n\n*********************Lancement du jeu DEMINEUR*********************\n\n\n");
@@ -267,6 +384,7 @@ int main(){
 						initialisationD(); // on intilialise les tableaux
 						nbMines=10;       // Prend la valeur de 10 car c'est le niveau debutant 
 						affichageD();     // Affichage de la grille de jeu
+						
 						while (1){
 							temps=clock();// Le chronometre est lancé
 							resultat = coordonneeD(&colonne, &ligne); // le resultat est l'union des coordonnées de l'utilisateur 
@@ -288,8 +406,12 @@ int main(){
 								  nbMarqueur++;
 								  if (grilleminesD[a][b])
 									nbBonMarqueur++;
+									
 							    }
 						      }
+						      
+						  
+						     
 						if ( (nbMarqueur == nbMines) || (nbBonMarqueur == nbMines) )// si le nombre de 
 							temps=clock();
 					        printf("Gagner!\n Vous avez mit %f secondes.\n", (double) temps/CLOCKS_PER_SEC);
@@ -304,6 +426,7 @@ int main(){
 					  }
 					  
 					}
+								
 
 
   
@@ -338,6 +461,7 @@ int main(){
 					if ((nbMarqueur == nbMines) || (nbBonMarqueur == nbMines)) // si le nombre de marqueur equivaut au nombre de mines et que c'est  marqueur sont bien placé 
 						temps=clock();
 				        printf("Gagner!\nTu as mis %f secondes.\n", (double) temps/CLOCKS_PER_SEC); // Alors l'utlisateur a gagner
+				        
 						return 0;
 					  
 					if (nbCaseJouee >= (TAILLEI*TAILLEI)-nbMines) // si l'utilisateur a joué toutes les cases sauf les mines alors il a perdu car il ne reste que les mines 
